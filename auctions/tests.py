@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.test import SimpleTestCase
 
+
 class ProjectSetupTests(SimpleTestCase):
 
     # This is our first very basic test to verify that CI setup is correct
