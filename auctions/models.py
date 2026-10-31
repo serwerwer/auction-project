@@ -3,8 +3,10 @@ from django.conf import settings
 
 class Auction(models.Model):
     title = models.CharField(max_length=250)
-    starting_price = models.DecimalField(max_digits = 9, decimal_places=2, default=100.00)
+    starting_price = models.DecimalField(max_digits = 9, decimal_places=2)
     ends_at = models.DateTimeField()
+    closed = models.BooleanField(default=False)
+    minimum_increment = models.DecimalField(max_digits = 9, decimal_places=0) 
 
 class User(models.Model):
     # to substitute with weras code

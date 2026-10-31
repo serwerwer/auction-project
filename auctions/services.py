@@ -1,26 +1,51 @@
 from .models import Auction, Bid
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from decimal import Decimal, InvalidOperation
 
 def place_bid(auction_id, user, amount):
+
+    # don't accept bids from unlogged users
+    if not user.is_authenticated:
+        raise ValidationError("Only logged users can plase bids")
+    
     auction = Auction.objects.get(pk=auction_id)
 
     # don't accept bids after auction deadline
     if timezone.now() >= auction.ends_at:
         raise ValidationError("Auction has ended")
 
+    # don't accept bids after auction is closed
+    if auction.closed:
+        raise ValidationError("This auction is already closed")
+
+    new_bid = Bid(
+        auction=auction,
+        user=user,
+        amount=amount,
+    )
+
+    # validate all model fields - prevents accepting invalid prices e.g. strings, NaN, infinity
+    new_bid.full_clean()
+
     highest_bid = Bid.objects.filter(auction=auction).order_by("-amount").first()
 
+    # Calculate the minimum acceptable bid
     if highest_bid is None:
-        current_price = auction.starting_price
+        minimum_acceptable_bid = auction.starting_price
     else:
-        current_price = highest_bid.amount
+        minimum_acceptable_bid = (
+            highest_bid.amount + auction.minimum_increment
+        )
 
-    # Cannot accept lower bids 
-    if amount <= current_price:
-        raise ValidationError("Bid must exceed the current price.")
+    # Reject bids below the minimum
+    if new_bid.amount < minimum_acceptable_bid:
+        raise ValidationError(
+            f"Bid must be at least {minimum_acceptable_bid} PLN."
+        )
 
-    new_bid = Bid.objects.create(auction = auction, amout = amount, user = user)
+    # save new bid to the database
+    new_bid.save()
 
     return new_bid
             
