@@ -1,0 +1,120 @@
+
+name: CI
+
+# Run CI on pushes and pull requests to main
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Allow CI to download the code, but not modify the repository
+permissions:
+  contents: read
+
+# Each job runs on a separate, temporary GitHub-hosted computer
+# Jobs are independent and can run at the same time
+jobs:
+
+  # Job 1: code quality
+  lint:
+    name: Code quality
+    runs-on: ubuntu-latest
+
+    steps:
+      # Download the repository code onto the temporary computer performing this job
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # Install the python version used by the project
+      - name: Install python version
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      # Install Ruff for static code analysis
+      # Ruff checks python code for common programming mistakes such as unused imports, and other issues, without running the app
+      - name: Install Ruff and black 
+        run: python -m pip install ruff black==26.10.1
+
+      # Analyse python code for common errors using Ruff
+      - name: Run Ruff
+        run: ruff check .
+
+      # check the formatting 
+      - name: Check formatting with black 
+        run: python -m black --check .   
+
+# Job 2: Dependencies security
+  security:
+    name: Dependency Security
+    runs-on: ubuntu-latest
+
+    steps:
+    # Download the repository code onto the temporary computer performing this job
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      
+      # Install python
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      # Install pip-audit, which checks python dependencies for known vulnerabilities
+      - name: Install pip-audit
+        run: python -m pip install pip-audit
+
+      # Check project dependencies listed in requirements.txt for known vulnerabilities
+      # If a known vulnerability is found, this job fails
+      - name: Audit dependencies
+        run: pip-audit -r requirements.txt
+
+# Job 3: Django tests
+  test:
+    name: Django Tests
+    runs-on: ubuntu-latest
+
+    # The environment variables are required by config/settings.py
+    # The secret key used here is only for temporary CI testing
+    # !!!!!!!!!!!!! ! It must NEVER BE USED on staging or production !!!!!!!!!!!!!!!!!!!!!!
+    env:
+      DJANGO_SECRET_KEY: "ci-only-insecure-test-key-123456789"
+      DJANGO_DEBUG: "False"
+
+    steps:
+    # Download the repository code onto the temporary computer performing this job
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # Install Python and cache previously downloaded pip packages to speed up future CI runs
+      # The cache is refreshed when requirements.txt changes
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      # Install project dependencies from requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      # Check Django configuration for errors
+      - name: Check Django configuration
+        run: python manage.py check
+
+      # Verify that no model migrations are missing
+      - name: Check migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      # Test the migration 
+      - name: Apply migrations 
+        run: python manage.py migrate --noinput
+
+      # Run all Django tests defined in our Django applications, including tests in auctions/tests.py
+      # Failed tests cause this job to fail as well
+      # If no tests exist, Django can report "Ran 0 tests"
+      - name: Run Django tests
+        run: python manage.py test
