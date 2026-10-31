@@ -30,16 +30,20 @@ jobs:
       - name: Install python version
         uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # Install Ruff for static code analysis
       # Ruff checks python code for common programming mistakes such as unused imports, and other issues, without running the app
-      - name: Install Ruff
-        run: python -m pip install ruff
+      - name: Install Ruff and black 
+        run: python -m pip install ruff black==26.10.1
 
       # Analyse python code for common errors using Ruff
       - name: Run Ruff
         run: ruff check .
+
+      # check the formatting 
+      - name: Check formatting with black 
+        run: python -m black --check .   
 
 # Job 2: Dependencies security
   security:
@@ -55,7 +59,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # Install pip-audit, which checks python dependencies for known vulnerabilities
       - name: Install pip-audit
@@ -88,7 +92,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
           cache: pip
 
       # Install project dependencies from requirements.txt
@@ -104,6 +108,10 @@ jobs:
       # Verify that no model migrations are missing
       - name: Check migrations
         run: python manage.py makemigrations --check --dry-run
+
+      # Test the migration 
+      - name: Apply migrations 
+        run: python manage.py migrate --noinput
 
       # Run all Django tests defined in our Django applications, including tests in auctions/tests.py
       # Failed tests cause this job to fail as well
