@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from typing import ClassVar
 
 from .managers import UserManager
 
@@ -35,7 +36,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
 
     # Do not request additional fields when creating a superuser
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: ClassVar[list[str]] = []
 
     # Use our custom manager to create users without usernames
     # The manager defines how users and superusers are created
