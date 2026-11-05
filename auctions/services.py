@@ -1,7 +1,6 @@
 from .models import Auction, Bid
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from decimal import Decimal, InvalidOperation
 
 def place_bid(auction_id, user, amount):
 
