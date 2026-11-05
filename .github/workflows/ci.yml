@@ -81,6 +81,29 @@ jobs:
     env:
       DJANGO_SECRET_KEY: "ci-only-insecure-test-key-123456789"
       DJANGO_DEBUG: "False"
+      POSTGRES_DB: auction_test
+      POSTGRES_USER: auction_test
+      POSTGRES_PASSWORD: ci-only-postgres-password
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: "5432"
+
+    
+    # Start a temporary PostgreSQL instance for this job
+    # The database is discarded after the CI job finishes
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: auction_test
+          POSTGRES_USER: auction_test
+          POSTGRES_PASSWORD: ci-only-postgres-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U auction_test -d auction_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
     # Download the repository code onto the temporary computer performing this job
