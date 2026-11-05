@@ -1,0 +1,47 @@
+
+# Docker compose configuration for the Krakowski Bal auction platform
+# Runs PostgreSQL locally in a container while Django runs separately in the Python virtual environment
+
+services:
+  db:
+    # PostgreSQL 16 using the lightweight Alpine Linux image
+    image: postgres:16-alpine
+
+    # Automatically restart the container unless it was stopped by the developer
+    restart: unless-stopped
+
+    # Configure the database name, user, and password
+    # Values are loaded from the local .env file
+    # Docker creates the database and user automatically when initializing an empty data directory
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    # Expose PostgreSQL to applications running on the host
+    # 127.0.0.1 restricts access to the local machine
+    # The host port defaults to 5432 unless overridden in .env
+    # The container always listens on port 543
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+
+    # Store database files in a persistent Docker volume
+    # Data survives container restarts and recreation
+    # !!! Removing the volume explicitly will delete the database!!!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    # Periodically check whether PostgreSQL is accepting connections to the configured database
+    # Double dollar signs prevent Docker Compose from substituting these variables before execution
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+# Define the named volume used by the PostgreSQL service
+# Each developer gets a separate local volume
+volumes:
+  postgres_data:
