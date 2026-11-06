@@ -12,7 +12,7 @@ def place_bid(auction_id, user, amount):
         raise ValidationError("Only logged users can plase bids")
 
     # this opration locks the database row corresponding to the given auction
-    auction = Auction.objects.select_for_update.get(pk=auction_id)
+    auction = Auction.objects.select_for_update().get(pk=auction_id)
 
     # don't accept bids after auction deadline
     if timezone.now() >= auction.ends_at:
