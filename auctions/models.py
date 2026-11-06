@@ -8,10 +8,6 @@ class Auction(models.Model):
     closed = models.BooleanField(default=False)
     minimum_increment = models.DecimalField(max_digits = 9, decimal_places=0) 
 
-class User(models.Model):
-    # to substitute with weras code
-    pass
-
 class Bid(models.Model):
     auction = models.ForeignKey(Auction,on_delete=models.PROTECT) # deleting auctions restricted
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT) 

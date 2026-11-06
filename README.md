@@ -14,7 +14,7 @@ Follow these steps after cloning this repo for the first time.
 
 ### PostgreSQL - Local Setup
 
-Each developer uses their own local PostgreSQL database running in Docker. Database credentials and data are not shared through Git.
+Each developer uses their own local PostgreSQL database running in Docker. Database credentials and data are not shared through Git. Before following the steps below make sure that your local .env file is set up.  
 
 1. Install and start Docker Desktop.
 2. Start PostgreSQL: `docker compose up -d db`
