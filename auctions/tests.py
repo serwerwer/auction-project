@@ -202,4 +202,3 @@ class ConcurrentBiddingTests(TransactionTestCase):
             highest_bid.amount,
             Decimal("110.00"),
         )
-
