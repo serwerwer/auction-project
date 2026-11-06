@@ -7,25 +7,33 @@ import datetime
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auctions', '0001_initial'),
+        ("auctions", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='auction',
-            name='ends_at',
-            field=models.DateTimeField(default=datetime.datetime(2027, 2, 6, 0, 0,)),
+            model_name="auction",
+            name="ends_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2027,
+                    2,
+                    6,
+                    0,
+                    0,
+                )
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='auction',
-            name='starting_price',
+            model_name="auction",
+            name="starting_price",
             field=models.DecimalField(decimal_places=2, default=100.0, max_digits=9),
         ),
         migrations.AddField(
-            model_name='auction',
-            name='title',
-            field=models.CharField(default='', max_length=250),
+            model_name="auction",
+            name="title",
+            field=models.CharField(default="", max_length=250),
             preserve_default=False,
         ),
     ]

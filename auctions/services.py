@@ -1,14 +1,18 @@
 from .models import Auction, Bid
 from django.utils import timezone
+from django.db import transaction
 from django.core.exceptions import ValidationError
 
+
+@transaction.atomic
 def place_bid(auction_id, user, amount):
 
     # don't accept bids from unlogged users
-    if not user.is_authenticated:
+    if user is None or not user.is_authenticated:
         raise ValidationError("Only logged users can plase bids")
-    
-    auction = Auction.objects.get(pk=auction_id)
+
+    # this opration locks the database row corresponding to the given auction
+    auction = Auction.objects.select_for_update.get(pk=auction_id)
 
     # don't accept bids after auction deadline
     if timezone.now() >= auction.ends_at:
@@ -33,18 +37,13 @@ def place_bid(auction_id, user, amount):
     if highest_bid is None:
         minimum_acceptable_bid = auction.starting_price
     else:
-        minimum_acceptable_bid = (
-            highest_bid.amount + auction.minimum_increment
-        )
+        minimum_acceptable_bid = highest_bid.amount + auction.minimum_increment
 
     # Reject bids below the minimum
     if new_bid.amount < minimum_acceptable_bid:
-        raise ValidationError(
-            f"Bid must be at least {minimum_acceptable_bid} PLN."
-        )
+        raise ValidationError(f"Bid must be at least {minimum_acceptable_bid} PLN.")
 
     # save new bid to the database
     new_bid.save()
 
     return new_bid
-            

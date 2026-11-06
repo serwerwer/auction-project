@@ -15,25 +15,61 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Auction',
+            name="Auction",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Bid',
+            name="Bid",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=9)),
-                ('auction', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='auctions.auction')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("amount", models.DecimalField(decimal_places=2, max_digits=9)),
+                (
+                    "auction",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="auctions.auction",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]
