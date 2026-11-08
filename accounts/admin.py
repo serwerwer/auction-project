@@ -18,7 +18,7 @@ class CustomUserAdmin(UserAdmin):
         ),
         (
             "Verification",
-            {"fields": ("email_verified", "phone_verified")},
+            {"fields": ("phone_verified",)},
         ),
         (
             "Permissions",
@@ -64,6 +64,6 @@ class CustomUserAdmin(UserAdmin):
     )
 
     # Allow filtering and searching user accounts
-    list_filter = ("is_staff", "is_active", "email_verified")
+    list_filter = ("is_staff", "is_active", "phone_verified")
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)

@@ -30,7 +30,6 @@ class User(AbstractUser):
 
     # Track whether user's contact details have been verified
     # These fields must only change after successful verification
-    email_verified = models.BooleanField(default=False)
     phone_verified = models.BooleanField(default=False)
 
     # Use email instead of username for Django authentication
