@@ -42,4 +42,4 @@ class AccountAdapter(DefaultAccountAdapter):
                 "Configure an SMS provider before production"
             )
 
-        print(f"[DEV SMS] Phone: {phone} | Code: {code}")
+        print(f"[DEV SMS] Phone: {phone} | Code: {code}", flush=True)
