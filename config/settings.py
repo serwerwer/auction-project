@@ -58,9 +58,11 @@ AUTH_USER_MODEL = "accounts.User"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -122,9 +124,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "pl"
 
-TIME_ZONE = "UTC"
+LANGUAGES = [
+    ("pl", "Polski"),
+]
+
+TIME_ZONE = "Europe/Warsaw"
 
 USE_I18N = True
 
@@ -145,3 +151,30 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+# Use both Django and allauth authentication backends
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Our custom user model does not have a username field
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+# Start with email-based authenticaion
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# Require email and password during registration
+ACCOUNT_SIGNUP_FIELDS = [
+    "email*",
+    "password1*",
+    "password2*",
+]
+
+# Users must confirm their email before logging in
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+# Redirect users to email management site after login and logout
+# since we do not have a home page configured just yet
+LOGIN_REDIRECT_URL = "/accounts/email/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
