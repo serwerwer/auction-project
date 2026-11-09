@@ -35,7 +35,8 @@ def auction_detail_and_bid(request, auction_id):
     bids = (Bid.objects.filter(auction=auction).select_related("user").order_by("-amount","-created_at"))
     highest_bid = bids.first()
 
-    current_price = (highest_bid.amount if highest_bid is not None else auction.starting_price)    
+    current_price = (highest_bid.amount if highest_bid is not None else auction.starting_price) 
+    minimum_increment = auction.minimum_increment   
 
     # render the HTML response     
-    return render(request, "auctions/auction_detail.html", {"auction": auction, "form": form, "bids": bids, "current_price": current_price,})    
+    return render(request, "auctions/auction_detail.html", {"auction": auction, "form": form, "bids": bids, "current_price": current_price, "minimum_increment": minimum_increment})    
