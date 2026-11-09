@@ -1,11 +1,10 @@
-# Create your views here.
-from django.views.decorators.http import require_http_methods
-from django.shortcuts import get_object_or_404, redirect, render
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
+from .forms import BidForm
 from .models import Auction, Bid
 from .services import place_bid
-from .forms import BidForm
 
 
 @require_http_methods(["GET", "POST"])

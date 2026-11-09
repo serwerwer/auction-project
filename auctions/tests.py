@@ -1,23 +1,20 @@
 "AI-written tests"
 
-from django.conf import settings
-from django.test import SimpleTestCase, TestCase, TransactionTestCase
-
-
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from decimal import Decimal
+from threading import Barrier
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
+from django.db import close_old_connections, connections
+from django.test import SimpleTestCase, TestCase, TransactionTestCase
 from django.utils import timezone
 
 from .models import Auction, Bid
 from .services import place_bid
-
-from concurrent.futures import ThreadPoolExecutor
-from threading import Barrier
-from django.db import close_old_connections, connections
 
 
 class ProjectSetupTests(SimpleTestCase):

@@ -1,7 +1,8 @@
-from .models import Auction, Bid
-from django.utils import timezone
-from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.utils import timezone
+
+from .models import Auction, Bid
 
 
 @transaction.atomic

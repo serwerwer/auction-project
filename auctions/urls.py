@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 # path is a function that connects URL pattern to Python view
