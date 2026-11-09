@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
 from django.db import close_old_connections, connections
 
+
 class ProjectSetupTests(SimpleTestCase):
 
     # This is our first very basic test to verify that CI setup is correct

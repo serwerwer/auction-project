@@ -1,4 +1,5 @@
-from django import forms 
+from django import forms
+
 
 class BidForm(forms.Form):
     amount = forms.DecimalField(

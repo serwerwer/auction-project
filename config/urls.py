@@ -20,6 +20,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("auctions/", include("auctions.urls")) # the part of the URL after auctions/ should be handled by that module 
+    path(
+        "auctions/", include("auctions.urls")
+    ),  # the part of the URL after auctions/ should be handled by that module
 ]
-
