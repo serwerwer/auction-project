@@ -8,17 +8,21 @@
 
     <h1>{{ auction.title }}</h1>
 
-    <p>Current price: {{ current_price }} PLN</p>
-    <p> Minimum increment: {{ minimum_increment }} PLN </p>
+    <p> Obecna cena: {{ current_price }} PLN</p>
+    <p> Minimalna różnica: {{ minimum_increment }} PLN </p>
 
-    <h2>Place a bid</h2>
+    {%if bidding_blocked%}
+        <p> Ta aukcja jest obecnie zamknięta. </p>
+    {% else %}    
+        <h2>Place a bid</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit bid</button>
-    </form>
-
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit bid</button>
+        </form>
+    {% endif %}    
+    
     <h2>Bid history</h2>
 
     <ul>

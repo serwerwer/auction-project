@@ -27,6 +27,9 @@ class Auction(models.Model):
             )
         ],
     )
+    # photo = models.ImageField(
+
+    # )
 
 
 class Bid(models.Model):
