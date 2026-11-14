@@ -5,3 +5,4 @@ python-dotenv==1.2.4
 sqlparse==0.6.0
 tzdata==2026.5
 black==26.10.1
+pillow==13.0.0

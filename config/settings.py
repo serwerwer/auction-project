@@ -140,3 +140,9 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+# Storing media (e.g. auction images)
+
+MEDIA_URL = "/media/" # web access
+
+MEDIA_ROOT = BASE_DIR / "media" # filesystem location 

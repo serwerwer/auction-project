@@ -23,15 +23,17 @@
                    href="{% url 'auctions:detail' auction_id=auction.id %}">
 
                     <div class="auction-image">
-                        {% if auction.photo %}
-                            <img src="{{ auction.photo.url }}"
-                                 alt="{{ auction.title }}"
-                                 loading="lazy">
-                        {% else %}
-                            <div class="photo-placeholder">
-                                Brak zdjęcia
-                            </div>
-                        {% endif %}
+                        {% with photo=auction.main_photo %}
+                            {% if photo %}
+                                <img src="{{ photo.image.url }}"
+                                    alt="{{ auction.title }}"
+                                    loading="lazy">
+                            {% else %}
+                                <div class="photo-placeholder">
+                                    Brak zdjęcia
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                     </div>
 
                     <div class="auction-details">

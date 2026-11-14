@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
 
 
 class Auction(models.Model):
@@ -27,9 +28,10 @@ class Auction(models.Model):
             )
         ],
     )
-    # photo = models.ImageField(
-
-    # )
+    # retrive main photo  
+    @property
+    def main_photo(self):
+        return self.auctionphoto_set.filter(is_main=True).first()
 
 
 class Bid(models.Model):
@@ -42,3 +44,26 @@ class Bid(models.Model):
         max_digits=9,
         decimal_places=2,
     )
+
+class AuctionPhoto(models.Model):
+    auction = models.ForeignKey(
+        Auction, 
+        on_delete=models.CASCADE, # delete photos when associated auction is deleted 
+    )
+
+    image = models.ImageField(
+        upload_to="auction_photos/"
+    )
+
+    is_main = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["auction"], # the condition is checked for a given auction 
+                condition=Q(is_main=True),
+                name = "unique_main_photo_per_auction",
+            )
+        ]
+
+

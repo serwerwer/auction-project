@@ -18,9 +18,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(
         "auctions/", include("auctions.urls")
     ),  # the part of the URL after auctions/ should be handled by that module
 ]
+
+# This is a stting only relevant for development. 
+# It enables displaying photos on the website
+# It uploads files from the files saved on the computer  
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )
