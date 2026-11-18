@@ -162,25 +162,14 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 # Start with email-based authenticaion
-ACCOUNT_LOGIN_METHODS = {"email", "phone"}
+ACCOUNT_LOGIN_METHODS = {"email"}
 
 # Require email and password during registration
 ACCOUNT_SIGNUP_FIELDS = [
     "email*",
-    "phone*",
     "password1*",
     "password2*",
 ]
-
-#Use our custom adapter to manage phone authentication
-ACCOUNT_ADAPTER = "accounts.adapters.AccountAdapter"
-
-# Require phone verification during registration and login
-ACCOUNT_PHONE_VERIFICATION_ENABLED = True
-
-# Limit verification attempts and code validity
-ACCOUNT_PHONE_VERIFICATION_ATTEMPTS = 3
-ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900
 
 # Users must confirm their email before logging in
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
