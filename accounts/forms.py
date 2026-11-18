@@ -1,8 +1,9 @@
 from django import forms
 
+
 # Add first and last name fields to user registration
 class CustomSignupForm(forms.Form):
-    first_nam = forms.CharField(
+    first_name = forms.CharField(
         label="Imię",
         max_length=50,
         required=True,

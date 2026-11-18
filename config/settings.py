@@ -70,7 +70,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -139,7 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATICFIELDS_DIRS = [BASE_DIR / "static"]
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -163,16 +163,19 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_LOGIN_METHODS = {"email"}
 
 # Require email and password during registration
+# here we only use fields supported ny allauth
 ACCOUNT_SIGNUP_FIELDS = [
     "email*",
     "password1*",
     "password2*",
 ]
 
+# Adding required first and last name fields to the signup form
+# which are not supported by allauth
+ACCOUNT_SIGNUP_FORM_CLASS = "accounts.forms.CustomSignupForm"
+
 # Users must confirm their email before logging in
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
-# Redirect users to email management site after login and logout
-# since we do not have a home page configured just yet
-LOGIN_REDIRECT_URL = "/accounts/email/"
+LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
