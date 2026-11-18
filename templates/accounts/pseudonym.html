@@ -78,26 +78,58 @@
             {% endfor %}
 
             {% if accepted %}
-                <p>Twój pseudonim został zaakceptowany.</p>
+                <p>Twój przypisany pseudonim:</p>
 
                 <div class="pseudonym-name">
                     {{ accepted.name }}
                 </div>
 
                 <p>
-                    Od teraz ta nazwa będzie widoczna
-                    przy Twoich ofertach.
+                    Pseudonim jest do Ciebie przypisany na stałe.
+                    Możesz jednak zdecydować, jak inni
+                    uczestnicy widzą Cię podczas licytacji.
+                </p>
+
+                <h2>Widoczność w aukcjach</h2>
+
+                <form method="post" class="pseudonym-actions">
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="use_real_name"
+                        {% if not user.use_pseudonym %}disabled{% endif %}
+                    >
+                        Imię i nazwisko
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="use_pseudonym"
+                        class="accept-button"
+                        {% if user.use_pseudonym %}disabled{% endif %}
+                    >
+                        Pseudonim
+                    </button>
+                </form>
+
+                <p>
+                    Aktualnie inni widzą Cię jako:
+                    <strong>{{ user.public_bidder_name }}</strong>
                 </p>
 
                 <p class="warning">
-                    Pseudonim jest przypisany na stałe
-                    i nie można go zmienić.
+                    UWAGA! Zmiana dotyczy również Twoich wcześniejszych
+                    ofert we wszystkich aukcjach.
                 </p>
+
             {% else %}
                 <p>
                     Domyślnie inni uczestnicy widzą
                     Twoje imię i nazwisko.
-                    Możesz zamiast nich używać pseudonimu.
+                    Możesz zamiast tego używać pseudonimu.
                 </p>
 
                 {% if candidate %}
@@ -134,10 +166,12 @@
                 </div>
 
                 <p class="warning">
-                    Po zaakceptowaniu pseudonimu
-                    nie będzie można go zmienić
-                    ani wrócić do wyświetlania
-                    imienia i nazwiska.
+                    Po zaakceptowaniu pseudonim zostanie
+                    przypisany do Twojego konta na stałe.
+                    Nie będzie można go zmienić ani wylosować nowego.
+                    W każdej chwili możesz jednak wybrać,
+                    czy inni uczestnicy mają widzieć Twój pseudonim,
+                    czy imię i nazwisko.
                 </p>
             {% endif %}
         </section>

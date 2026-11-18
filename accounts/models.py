@@ -29,6 +29,9 @@ class User(AbstractUser):
     # The manager defines how users and superusers are created
     objects = UserManager()
 
+    # Choose whether to show the pseudonym in public bid history
+    use_pseudonym = models.BooleanField(default=False)
+
     # Display the email when representing a user as text
     def __str__(self):
         return self.email
@@ -38,7 +41,7 @@ class User(AbstractUser):
         # show the accepted pseudonym when available
         pseudonym = getattr(self, "auction_pseudonym", None)
 
-        if pseudonym and pseudonym.accepted_at:
+        if self.use_pseudonym and pseudonym and pseudonym.accepted_at:
             return pseudonym.name
 
         # otherwise, show the real name of the user
