@@ -18,20 +18,6 @@ class User(AbstractUser):
     # Each email address can belong to only one account
     email = models.EmailField(unique=True)
 
-    # Store the phone number for SMS authentication and notifications
-    # Allow empty values during incomplete registration
-    # Phone numbers should be normalized to E.164 format (example: +48512345678)
-    phone_number = models.CharField(
-        max_length=16,
-        unique=True,
-        null=True,
-        blank=True,
-    )
-
-    # Track whether user's contact details have been verified
-    # These fields must only change after successful verification
-    phone_verified = models.BooleanField(default=False)
-
     # Use email instead of username for Django authentication
     USERNAME_FIELD = "email"
 
