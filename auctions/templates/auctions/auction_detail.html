@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ auction.title }}</title>
+</head>
+<body>
+
+    <h1>{{ auction.title }}</h1>
+
+    <p>Current price: {{ current_price }} PLN</p>
+    <p> Minimum increment: {{ minimum_increment }} PLN </p>
+
+    <h2>Place a bid</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit bid</button>
+    </form>
+
+    <h2>Bid history</h2>
+
+    <ul>
+        {% for bid in bids %}
+            <li>{{ bid.user}}: {{ bid.amount }} PLN</li>
+        {% empty %}
+            <li>No bids yet.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
