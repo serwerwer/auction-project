@@ -1,6 +1,7 @@
 from typing import ClassVar
 
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from django.db import models
 
 from .managers import UserManager
@@ -31,3 +32,43 @@ class User(AbstractUser):
     # Display the email when representing a user as text
     def __str__(self):
         return self.email
+
+    @property
+    def public_bidder_name(self):
+        # show the accepted pseudonym when available
+        pseudonym = getattr(self, "auction_pseudonym", None)
+
+        if pseudonym and pseudonym.accepted_at:
+            return pseudonym.name
+
+        # otherwise, show the real name of the user
+        full_name = f"{self.first_name} {self.last_name}".strip()
+
+        return full_name or "Uczestnik"
+
+# Store predefined pseudonyms that users can randomly draw
+class Pseudonym(models.Model):
+    # Store unique names, so the same pseudonym cannot exist twice
+    name = models.CharField(max_length=50, unique=True)
+
+    # Connect an accepted pseudonym to one user only
+    # Keep the pseudonym reserved even if the user account is deleted
+    assigned_to = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="auction_pseudonym",
+    )
+
+    # Store when the user permanently accepted the pseudonym
+    # Empty value means the pseudonym has not been accepted yet
+    accepted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    # Display the pseudonym instead of the deafault ID
+    def __str__(self):
+        return self.name

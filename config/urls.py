@@ -25,4 +25,5 @@ urlpatterns = [
     path("auctions/", include("auctions.urls")
 ),  # the part of the URL after auctions/ should be handled by that module
     path("accounts/", include("allauth.urls")),
+    path("accounts/", include("accounts.urls")),
 ]

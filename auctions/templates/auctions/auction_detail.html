@@ -23,7 +23,7 @@
 
     <ul>
         {% for bid in bids %}
-            <li>{{ bid.user}}: {{ bid.amount }} PLN</li>
+            <li>{{ bid.user.public_bidder_name}}: {{ bid.amount }} PLN</li>
         {% empty %}
             <li>No bids yet.</li>
         {% endfor %}
