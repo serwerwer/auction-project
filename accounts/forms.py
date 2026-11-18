@@ -1,5 +1,5 @@
 from django import forms
-
+from django.contrib.auth import get_user_model
 
 # Add first and last name fields to user registration
 class CustomSignupForm(forms.Form):
@@ -23,3 +23,25 @@ class CustomSignupForm(forms.Form):
         user.first_name = self.cleaned_data["first_name"]
         user.last_name = self.cleaned_data["last_name"]
         user.save(update_fields=["first_name", "last_name"])
+
+# Use our custom User model
+User = get_user_model()
+
+
+# Allow users to edit their first and last name
+# Email and pseudonym are managed separately
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name"]
+
+        labels = {
+            "first_name": "Imię",
+            "last_name": "Nazwisko",
+        }
+
+    # Require both names when updating the profile
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["first_name"].required = True
+        self.fields["last_name"].required = True

@@ -1,0 +1,167 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Moje konto | Krakowski Bal</title>
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="{% url 'home' %}" class="profile-brand">
+            KRAKOWSKI BAL
+        </a>
+
+        <a href="{% url 'home' %}" class="back-link">
+            ← Wróć do aukcji
+        </a>
+    </div>
+</header>
+
+<main class="profile-main">
+    <div class="profile-container">
+
+        <span class="eyebrow">STREFA UCZESTNIKA</span>
+        <h1>Moje konto</h1>
+
+        <p class="profile-intro">
+            Twoje dane i ustawienia udziału w aukcjach
+            Krakowskiego Balu
+        </p>
+
+        {% for message in messages %}
+            <div class="profile-message">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <section class="profile-card">
+            <div class="profile-section-header">
+                <div>
+                    <h2>Dane osobowe</h2>
+                    <p>Możesz zmienić swoje imię i nazwisko</p>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="profile-fields">
+                    <div class="profile-field">
+                        <label for="{{ form.first_name.id_for_label }}">
+                            Imię
+                        </label>
+                        {{ form.first_name }}
+                        {{ form.first_name.errors }}
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="{{ form.last_name.id_for_label }}">
+                            Nazwisko
+                        </label>
+                        {{ form.last_name }}
+                        {{ form.last_name.errors }}
+                    </div>
+                </div>
+
+                <button type="submit" class="profile-save">
+                    Zapisz zmiany
+                </button>
+            </form>
+        </section>
+
+        <section class="profile-card">
+            <div class="profile-section-header">
+                <div>
+                    <h2>Adres e-mail</h2>
+                    <p>Adres używany do logowania</p>
+                </div>
+            </div>
+
+            <div class="profile-data-row">
+                <span>{{ user.email }}</span>
+
+                <a href="{% url 'account_email' %}">
+                    Zarządzaj e-mailem ↗
+                </a>
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="profile-section-header">
+                <div>
+                    <h2>Pseudonim aukcyjny</h2>
+                    <p>
+                        Wybierz, jak inni uczestnicy widzą Cię
+                        podczas licytacji
+                    </p>
+                </div>
+            </div>
+
+            {% if pseudonym %}
+                <div class="profile-pseudonym">
+                    <div>
+                        <span class="profile-data-label">
+                            Twój pseudonim
+                        </span>
+
+                        <strong>{{ pseudonym.name }}</strong>
+                    </div>
+
+                    {% if user.use_pseudonym %}
+                        <span class="profile-status active">
+                            Aktywny
+                        </span>
+                    {% else %}
+                        <span class="profile-status">
+                            Nieaktywny
+                        </span>
+                    {% endif %}
+                </div>
+
+                <p class="profile-visibility">
+                    Aktualnie widoczna nazwa:
+                    <strong>{{ user.public_bidder_name }}</strong>
+                </p>
+            {% else %}
+                <p class="profile-empty">
+                    Nie masz jeszcze przypisanego pseudonimu
+                </p>
+            {% endif %}
+
+            <a
+                href="{% url 'pseudonym_settings' %}"
+                class="profile-link"
+            >
+                {% if pseudonym %}
+                    Zarządzaj pseudonimem
+                {% else %}
+                    Wylosuj pseudonim
+                {% endif %}
+
+                <span aria-hidden="true">↗</span>
+            </a>
+        </section>
+
+        <div class="profile-bottom">
+            <a href="{% url 'account_change_password' %}">
+                Zmień hasło
+            </a>
+
+            <a href="{% url 'account_logout' %}">
+                Wyloguj się
+            </a>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from .models import Pseudonym
+from .forms import ProfileForm
 
 # Get our custom User model
 User = get_user_model()
@@ -190,5 +191,40 @@ def pseudonym_settings(request):
         {
             "accepted": None,
             "candidate": candidate,
+        },
+    )
+
+
+# Display and update the user's account details
+@login_required
+@require_http_methods(["GET", "POST"])
+def account_profile(request):
+
+    # Load the user's existing profile data
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=request.user)
+
+        # Save the new first and last name if both are valid
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Dane konta zostały zapisane.")
+            return redirect("account_profile")
+
+    else:
+        form = ProfileForm(instance=request.user)
+
+    # Check if the user has already accepted a pseudonym
+    pseudonym = Pseudonym.objects.filter(
+        assigned_to=request.user,
+        accepted_at__isnull=False,
+    ).first()
+
+    # Display the account panel
+    return render(
+        request,
+        "accounts/profile.html",
+        {
+            "form": form,
+            "pseudonym": pseudonym,
         },
     )
