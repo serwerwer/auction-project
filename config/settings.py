@@ -40,11 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # our applications
     "auctions",
     "accounts",
-
     # authentication and google login
     "allauth",
     "allauth.account",
