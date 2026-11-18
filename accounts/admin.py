@@ -17,10 +17,6 @@ class CustomUserAdmin(UserAdmin):
             {"fields": ("first_name", "last_name")},
         ),
         (
-            "Verification",
-            {"fields": ("email_verified",)},
-        ),
-        (
             "Permissions",
             {
                 "fields": (
@@ -37,9 +33,6 @@ class CustomUserAdmin(UserAdmin):
             {"fields": ("last_login", "date_joined")},
         ),
     )
-
-    # Prevent admin to manualy change the verification status of user's email
-    readonly_fields = ("email_verified",)
 
     # Define the fields displayed when creating a new user
     add_fieldsets = (
@@ -62,12 +55,11 @@ class CustomUserAdmin(UserAdmin):
         "email",
         "first_name",
         "last_name",
-        "email_verified",
         "is_staff",
         "is_active",
     )
 
     # Allow filtering and searching user accounts
-    list_filter = ("is_staff", "is_active", "email_verified")
+    list_filter = ("is_staff", "is_active")
     search_fields = ("email", "first_name", "last_name")
     ordering = ("last_name",)
