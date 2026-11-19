@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_http_methods
 from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 
 from .forms import BidForm
 from .models import Auction, Bid
@@ -12,7 +12,7 @@ from .services import place_bid
 def auction_detail_and_bid(request, auction_id):
 
     auction = get_object_or_404(Auction, pk=auction_id)
-    
+
     # bidding is blocked when auction is closed of post deadline
     bidding_blocked = auction.closed or auction.ends_at <= timezone.now()
 
@@ -63,16 +63,15 @@ def auction_detail_and_bid(request, auction_id):
         },
     )
 
+
 def auction_list(request):
 
     active_auction_list = Auction.objects.filter(
-        closed = False, 
-        ends_at__gt = timezone.now()
+        closed=False, ends_at__gt=timezone.now()
     ).order_by("ends_at")
 
     return render(
-        request, 
+        request,
         "auctions/auction_list.html",
-        {"active_auction_list": active_auction_list}
-    ) 
-
+        {"active_auction_list": active_auction_list},
+    )

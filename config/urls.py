@@ -15,11 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
-from django.urls import include, path
-
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,9 +27,9 @@ urlpatterns = [
     ),  # the part of the URL after auctions/ should be handled by that module
 ]
 
-# This is a stting only relevant for development. 
+# This is a stting only relevant for development.
 # It enables displaying photos on the website
-# It uploads files from the files saved on the computer  
+# It uploads files from the files saved on the computer
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,

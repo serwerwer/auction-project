@@ -4,12 +4,16 @@ from .models import Auction, AuctionPhoto
 
 # Register auction model
 # This means that the model can be managed from the admin site
-# add photo uploads 
+# add photo uploads
+
 
 class AuctionPhotoInline(admin.TabularInline):
-    model = AuctionPhoto 
+    model = AuctionPhoto
     extra = 2
+
 
 @admin.register(Auction)
 class AuctionAdmin(admin.ModelAdmin):
-    inlines = [AuctionPhotoInline]
+    inlines = [
+        AuctionPhotoInline
+    ]  # noqa: RUF012 (this design is intentional but ruff produces the error here)
