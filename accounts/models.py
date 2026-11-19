@@ -72,6 +72,10 @@ class Pseudonym(models.Model):
         editable=False,
     )
 
+    # Set Polish names for the Django Admin panel
+    class Meta:
+        verbose_name = "Pseudonim"
+        verbose_name_plural = "Pseudonimy"
     # Display the pseudonym instead of the deafault ID
     def __str__(self):
         return self.name
