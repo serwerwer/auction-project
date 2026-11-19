@@ -116,9 +116,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+LANGUAGE_CODE = "pl"  # polish is the default language for Django messages
+
+TIME_ZONE = "Europe/Warsaw"  # default timezone is set to polish timezone
 
 USE_I18N = True
 
@@ -139,3 +140,9 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+# Storing media (e.g. auction images)
+
+MEDIA_URL = "/media/"  # web access
+
+MEDIA_ROOT = BASE_DIR / "media"  # filesystem location
