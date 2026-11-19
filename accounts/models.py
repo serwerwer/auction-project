@@ -1,7 +1,7 @@
 from typing import ClassVar
 
-from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from .managers import UserManager
@@ -49,6 +49,7 @@ class User(AbstractUser):
 
         return full_name or "Uczestnik"
 
+
 # Store predefined pseudonyms that users can randomly draw
 class Pseudonym(models.Model):
     # Store unique names, so the same pseudonym cannot exist twice
@@ -76,6 +77,7 @@ class Pseudonym(models.Model):
     class Meta:
         verbose_name = "Pseudonim"
         verbose_name_plural = "Pseudonimy"
+
     # Display the pseudonym instead of the deafault ID
     def __str__(self):
         return self.name

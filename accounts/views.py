@@ -6,11 +6,12 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from .models import Pseudonym
 from .forms import ProfileForm
+from .models import Pseudonym
 
 # Get our custom User model
 User = get_user_model()
+
 
 # Allow only logged-in users to manage their pseudonyms
 # GET displays the page and POST handles user actions
@@ -82,9 +83,7 @@ def pseudonym_settings(request):
             )
 
             # Try to draw a different pseudonym than the previous one
-            alternative = available.exclude(
-                pk=current_id
-            ).order_by("?").first()
+            alternative = available.exclude(pk=current_id).order_by("?").first()
 
             # Reuse the previous option if no alternative is available
             candidate = alternative or available.order_by("?").first()
@@ -116,9 +115,7 @@ def pseudonym_settings(request):
             with transaction.atomic():
 
                 # Lock the user to prevent two simultaneous acceptances
-                locked_user = User.objects.select_for_update().get(
-                    pk=request.user.pk
-                )
+                locked_user = User.objects.select_for_update().get(pk=request.user.pk)
 
                 # Check if another request already assigned a pseudonym
                 existing = Pseudonym.objects.filter(
@@ -135,11 +132,15 @@ def pseudonym_settings(request):
                 else:
                     # Lock the candidate while checking availability
                     # Another user cannot accept it at the same time
-                    candidate = Pseudonym.objects.select_for_update().filter(
-                        pk=candidate_id,
-                        assigned_to__isnull=True,
-                        accepted_at__isnull=True,
-                    ).first()
+                    candidate = (
+                        Pseudonym.objects.select_for_update()
+                        .filter(
+                            pk=candidate_id,
+                            assigned_to__isnull=True,
+                            accepted_at__isnull=True,
+                        )
+                        .first()
+                    )
 
                     # Ask for another draw if the candidate is already taken
                     if candidate is None:
@@ -152,9 +153,7 @@ def pseudonym_settings(request):
                         # Assign the pseudonym permanently to this user
                         candidate.assigned_to = locked_user
                         candidate.accepted_at = timezone.now()
-                        candidate.save(
-                            update_fields=["assigned_to", "accepted_at"]
-                        )
+                        candidate.save(update_fields=["assigned_to", "accepted_at"])
 
                         # Start displaying the pseudonym after acceptance
                         locked_user.use_pseudonym = True

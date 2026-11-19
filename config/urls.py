@@ -19,13 +19,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
 from config.views import home
 
 urlpatterns = [
     path("", home, name="home"),
     path("admin/", admin.site.urls),
-    path("auctions/", include("auctions.urls")
-),  # the part of the URL after auctions/ should be handled by that module
+    path(
+        "auctions/", include("auctions.urls")
+    ),  # the part of the URL after auctions/ should be handled by that module
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),
 ]

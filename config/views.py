@@ -1,4 +1,3 @@
-
 from django.db.models import Max
 from django.shortcuts import render
 from django.utils import timezone
@@ -8,9 +7,9 @@ from auctions.models import Auction
 
 def home(request):
     # Fetch auctions with their highest bids
-    auctions = Auction.objects.annotate(
-        highest_bid=Max("bid__amount")
-    ).order_by("ends_at")
+    auctions = Auction.objects.annotate(highest_bid=Max("bid__amount")).order_by(
+        "ends_at"
+    )
 
     now = timezone.now()
     auction_items = []

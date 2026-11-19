@@ -1,5 +1,8 @@
+from typing import ClassVar
+
 from django import forms
 from django.contrib.auth import get_user_model
+
 
 # Add first and last name fields to user registration
 class CustomSignupForm(forms.Form):
@@ -24,6 +27,7 @@ class CustomSignupForm(forms.Form):
         user.last_name = self.cleaned_data["last_name"]
         user.save(update_fields=["first_name", "last_name"])
 
+
 # Use our custom User model
 User = get_user_model()
 
@@ -33,9 +37,9 @@ User = get_user_model()
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["first_name", "last_name"]
+        fields: ClassVar[list[str]] = ["first_name", "last_name"]
 
-        labels = {
+        labels: ClassVar[dict[str, str]] = {
             "first_name": "Imię",
             "last_name": "Nazwisko",
         }

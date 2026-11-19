@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Pseudonym
+from .models import Pseudonym, User
 
 
 # Register the custom User model in Django Admin
@@ -64,6 +64,7 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ("email", "first_name", "last_name")
     ordering = ("last_name",)
 
+
 @admin.register(Pseudonym)
 class PseudonymAdmin(admin.ModelAdmin):
     list_display = ("name", "assigned_to", "accepted_at")
@@ -80,7 +81,7 @@ class PseudonymAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         # Prevent deliting of accepted pseudonyms through admin
-       if obj and obj.accepted_at:
-           return False
+        if obj and obj.accepted_at:
+            return False
 
-       return super().has_delete_permission(request, obj)
+        return super().has_delete_permission(request, obj)
