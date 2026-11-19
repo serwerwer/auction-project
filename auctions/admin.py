@@ -14,4 +14,4 @@ class AuctionPhotoInline(admin.TabularInline):
 
 @admin.register(Auction)
 class AuctionAdmin(admin.ModelAdmin):
-    inlines = [AuctionPhotoInline] # noqa: RUF012
+    inlines = [AuctionPhotoInline]  # noqa: RUF012
