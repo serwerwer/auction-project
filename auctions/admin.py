@@ -14,6 +14,4 @@ class AuctionPhotoInline(admin.TabularInline):
 
 @admin.register(Auction)
 class AuctionAdmin(admin.ModelAdmin):
-    inlines = [
-        AuctionPhotoInline
-    ]  # noqa: RUF012 (this design is intentional but ruff produces the error here)
+    inlines = [AuctionPhotoInline] # noqa: RUF012

@@ -58,7 +58,7 @@ class AuctionPhoto(models.Model):
     is_main = models.BooleanField(default=False)
 
     class Meta:
-        constraints = [  # noqa: RUF012 (this design is intentional but ruff produces the error here)
+        constraints = [  # noqa: RUF012
             models.UniqueConstraint(
                 fields=["auction"],  # the condition is checked for a given auction
                 condition=Q(is_main=True),
