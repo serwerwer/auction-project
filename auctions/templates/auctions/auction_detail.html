@@ -1,33 +1,153 @@
+{% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{{ auction.title }}</title>
+
+    <link rel="stylesheet"
+          href="{% static 'auctions/auction_detail.css' %}">
 </head>
+
 <body>
+    <main class="container">
 
-    <h1>{{ auction.title }}</h1>
+        <!-- Navigation -->
+        <nav class="navigation">
+            <a href="{% url 'auctions:list' %}">
+                ← Wszystkie aukcje
+            </a>
+        </nav>
 
-    <p>Current price: {{ current_price }} PLN</p>
-    <p> Minimum increment: {{ minimum_increment }} PLN </p>
+        <div class="auction-layout">
 
-    <h2>Place a bid</h2>
+            <!-- Photo gallery -->
+            <section class="gallery">
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit bid</button>
-    </form>
+                <div class="main-image">
+                    {% with photo=auction.main_photo %}
+                        {% if photo %}
+                            <img src="{{ photo.image.url }}"
+                                 alt="{{ auction.title }}">
+                        {% else %}
+                            <div class="photo-placeholder">
+                                Brak zdjęcia
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
 
-    <h2>Bid history</h2>
+                <div class="additional-images">
+                    {% for photo in auction.auctionphoto_set.all %}
+                        {% if not photo.is_main %}
+                            <a href="{{ photo.image.url }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                <img src="{{ photo.image.url }}"
+                                     alt="{{ auction.title }}"
+                                     loading="lazy">
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
 
-    <ul>
-        {% for bid in bids %}
-            <li>{{ bid.user.public_bidder_name}}: {{ bid.amount }} PLN</li>
-        {% empty %}
-            <li>No bids yet.</li>
-        {% endfor %}
-    </ul>
+            </section>
 
+            <!-- Auction information -->
+            <section class="auction-info">
+
+                {% if bidding_blocked %}
+                    <span class="status closed">
+                        Aukcja zakończona
+                    </span>
+                {% else %}
+                    <span class="status active">
+                        Aukcja aktywna
+                    </span>
+                {% endif %}
+
+                <h1>{{ auction.title }}</h1>
+
+                <div class="price-section">
+                    <p class="price-label">Aktualna cena</p>
+                    <p class="current-price">
+                        {{ current_price }} zł
+                    </p>
+                </div>
+
+                <div class="auction-parameters">
+
+                    <div class="parameter">
+                        <span>Cena wywoławcza</span>
+                        <strong>{{ auction.starting_price }} zł</strong>
+                    </div>
+
+                    <div class="parameter">
+                        <span>Minimalne postąpienie</span>
+                        <strong>{{ auction.minimum_increment }} zł</strong>
+                    </div>
+
+                    <div class="parameter">
+                        <span>Koniec aukcji</span>
+                        <strong>
+                            {{ auction.ends_at|date:"d.m.Y, H:i" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <!-- Bidding -->
+                <div class="bidding-section">
+
+                    {% if bidding_blocked %}
+
+                        <div class="closed-message">
+                            Licytacja została zakończona.
+                            Nie można już składać ofert.
+                        </div>
+
+                    {% else %}
+
+                        <h2>Złóż ofertę</h2>
+
+                        <form method="post">
+                            {% csrf_token %}
+
+                            {{ form.as_p }}
+
+                            <button type="submit" class="bid-button">
+                                Licytuj
+                            </button>
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Bidding history -->
+        <section class="bid-history">
+
+            <h2>Historia licytacji</h2>
+
+            {% for bid in bids %}
+                <div class="bid-row">
+                    <span>{{ bid.user.public_bidder_name }}</span>
+                    <strong>{{ bid.amount }} zł</strong>
+                </div>
+            {% empty %}
+                <p class="empty-history">
+                    Nikt jeszcze nie złożył oferty.
+                </p>
+            {% endfor %}
+
+        </section>
+
+    </main>
 </body>
 </html>

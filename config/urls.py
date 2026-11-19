@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from config.views import home
@@ -27,3 +29,12 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),
 ]
+
+# This is a stting only relevant for development.
+# It enables displaying photos on the website
+# It uploads files from the files saved on the computer
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )

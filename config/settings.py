@@ -151,6 +151,12 @@ MAILERS = {
     },
 }
 
+# Storing media (e.g. auction images)
+
+MEDIA_URL = "/media/"  # web access
+
+MEDIA_ROOT = BASE_DIR / "media"  # filesystem location
+
 # Use both Django and allauth authentication backends
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",

@@ -1,0 +1,59 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Aukcje charytatywne </title>
+    <link rel="stylesheet" href="{% static 'auctions/auction_list.css' %}">
+</head>
+<body>
+    <main class="container">
+        <header class="page-header">
+            <h1>Aukcje charytatywne</h1>
+            <p>Przeglądaj aktualne aukcje i wspieraj szczytny cel.</p>
+        </header>
+
+        <div class="auction-grid">
+            {% for auction in active_auction_list %}
+
+                <a class="auction-card"
+                   href="{% url 'auctions:detail' auction_id=auction.id %}">
+
+                    <div class="auction-image">
+                        {% with photo=auction.main_photo %}
+                            {% if photo %}
+                                <img src="{{ photo.image.url }}"
+                                    alt="{{ auction.title }}"
+                                    loading="lazy">
+                            {% else %}
+                                <div class="photo-placeholder">
+                                    Brak zdjęcia
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <div class="auction-details">
+                        <h2>{{ auction.title }}</h2>
+
+                        <p class="price-label">Cena wywoławcza</p>
+                        <p class="price">
+                            {{ auction.starting_price|floatformat:2 }} zł
+                        </p>
+
+                        <p class="deadline">
+                            Koniec: {{ auction.ends_at|date:"d.m.Y, H:i" }}
+                        </p>
+                    </div>
+                </a>
+
+            {% empty %}
+                <p>Obecnie nie ma aktywnych aukcji.</p>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>
