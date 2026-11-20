@@ -1,0 +1,40 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% block head_title %}Krakowski Bal{% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="page">
+        <header class="site-header">
+            <a href="/" class="brand">KRAKOWSKI BAL</a>
+        </header>
+
+        <main class="auth-card">
+            {% if messages %}
+                <div class="messages" role="status">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block body %}
+                {% block content %}{% endblock %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block extra_body %}{% endblock %}
+</body>
+</html>

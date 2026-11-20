@@ -41,9 +41,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # custom apps
+    # our applications
     "auctions",
     "accounts",
+    # authentication and google login
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
 
 # Use the project's custom user model instead of Django's default user
@@ -52,9 +57,11 @@ AUTH_USER_MODEL = "accounts.User"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -64,7 +71,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -116,10 +123,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
+LANGUAGE_CODE = "pl"
 
-LANGUAGE_CODE = "pl"  # polish is the default language for Django messages
+LANGUAGES = [
+    ("pl", "Polski"),
+]
 
-TIME_ZONE = "Europe/Warsaw"  # default timezone is set to polish timezone
+TIME_ZONE = "Europe/Warsaw"
 
 USE_I18N = True
 
@@ -130,7 +140,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -146,3 +156,33 @@ MAILERS = {
 MEDIA_URL = "/media/"  # web access
 
 MEDIA_ROOT = BASE_DIR / "media"  # filesystem location
+
+# Use both Django and allauth authentication backends
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Our custom user model does not have a username field
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+# Start with email-based authenticaion
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# Require email and password during registration
+# here we only use fields supported ny allauth
+ACCOUNT_SIGNUP_FIELDS = [
+    "email*",
+    "password1*",
+    "password2*",
+]
+
+# Adding required first and last name fields to the signup form
+# which are not supported by allauth
+ACCOUNT_SIGNUP_FORM_CLASS = "accounts.forms.CustomSignupForm"
+
+# Users must confirm their email before logging in
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"

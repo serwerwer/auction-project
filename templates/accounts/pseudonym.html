@@ -1,0 +1,180 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pseudonim | Krakowski Bal</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        .pseudonym-panel {
+            max-width: 580px;
+            margin: 70px auto;
+            padding: 36px;
+            border: 1px solid #e8e3e8;
+            background: white;
+        }
+
+        .pseudonym-panel h1 {
+            font-family: Georgia, serif;
+            font-size: 38px;
+            font-weight: 400;
+        }
+
+        .pseudonym-name {
+            margin: 30px 0;
+            padding: 32px;
+            background: #f8f6f7;
+            text-align: center;
+            font-family: Georgia, serif;
+            font-size: 32px;
+            color: #753b77;
+        }
+
+        .pseudonym-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pseudonym-actions button {
+            padding: 14px 20px;
+            cursor: pointer;
+            border: 1px solid #191719;
+            background: white;
+            font: inherit;
+        }
+
+        .pseudonym-actions .accept-button {
+            background: #d93338;
+            color: white;
+            border-color: #d93338;
+        }
+
+        .warning {
+            color: #8b3535;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f6f7;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="pseudonym-panel">
+            <a href="{% url 'home' %}">← Wróć do aukcji</a>
+
+            <h1>Twój pseudonim</h1>
+
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+
+            {% if accepted %}
+                <p>Twój przypisany pseudonim:</p>
+
+                <div class="pseudonym-name">
+                    {{ accepted.name }}
+                </div>
+
+                <p>
+                    Pseudonim jest do Ciebie przypisany na stałe.
+                    Możesz jednak zdecydować, jak inni
+                    uczestnicy widzą Cię podczas licytacji.
+                </p>
+
+                <h2>Widoczność w aukcjach</h2>
+
+                <form method="post" class="pseudonym-actions">
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="use_real_name"
+                        {% if not user.use_pseudonym %}disabled{% endif %}
+                    >
+                        Imię i nazwisko
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="use_pseudonym"
+                        class="accept-button"
+                        {% if user.use_pseudonym %}disabled{% endif %}
+                    >
+                        Pseudonim
+                    </button>
+                </form>
+
+                <p>
+                    Aktualnie inni widzą Cię jako:
+                    <strong>{{ user.public_bidder_name }}</strong>
+                </p>
+
+                <p class="warning">
+                    UWAGA! Zmiana dotyczy również Twoich wcześniejszych
+                    ofert we wszystkich aukcjach.
+                </p>
+
+            {% else %}
+                <p>
+                    Domyślnie inni uczestnicy widzą
+                    Twoje imię i nazwisko.
+                    Możesz zamiast tego używać pseudonimu.
+                </p>
+
+                {% if candidate %}
+                    <div class="pseudonym-name">
+                        {{ candidate.name }}
+                    </div>
+                {% endif %}
+
+                <div class="pseudonym-actions">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="action" value="draw">
+                            {% if candidate %}
+                                Losuj ponownie
+                            {% else %}
+                                Wylosuj pseudonim
+                            {% endif %}
+                        </button>
+                    </form>
+
+                    {% if candidate %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <button
+                                type="submit"
+                                name="action"
+                                value="accept"
+                                class="accept-button"
+                            >
+                                Akceptuję pseudonim
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+
+                <p class="warning">
+                    Po zaakceptowaniu pseudonim zostanie
+                    przypisany do Twojego konta na stałe.
+                    Nie będzie można go zmienić ani wylosować nowego.
+                    W każdej chwili możesz jednak wybrać,
+                    czy inni uczestnicy mają widzieć Twój pseudonim,
+                    czy imię i nazwisko.
+                </p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

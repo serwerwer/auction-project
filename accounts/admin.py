@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User
+from .models import Pseudonym, User
 
 
 # Register the custom User model in Django Admin
@@ -14,11 +14,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {"fields": ("email", "password")}),
         (
             "Personal information",
-            {"fields": ("first_name", "last_name", "phone_number")},
-        ),
-        (
-            "Verification",
-            {"fields": ("email_verified", "phone_verified")},
+            {"fields": ("first_name", "last_name")},
         ),
         (
             "Permissions",
@@ -64,6 +60,28 @@ class CustomUserAdmin(UserAdmin):
     )
 
     # Allow filtering and searching user accounts
-    list_filter = ("is_staff", "is_active", "email_verified")
+    list_filter = ("is_staff", "is_active")
     search_fields = ("email", "first_name", "last_name")
-    ordering = ("email",)
+    ordering = ("last_name",)
+
+
+@admin.register(Pseudonym)
+class PseudonymAdmin(admin.ModelAdmin):
+    list_display = ("name", "assigned_to", "accepted_at")
+    search_fields = ("name",)
+    readonly_fields = ("assigned_to", "accepted_at")
+    actions = None
+
+    def get_readonly_fields(self, request, obj=None):
+        # Lock accepted pseudonyms in the admin form
+        if obj and obj.accepted_at:
+            return ("name", "assigned_to", "accepted_at")
+
+        return ("assigned_to", "accepted_at")
+
+    def has_delete_permission(self, request, obj=None):
+        # Prevent deliting of accepted pseudonyms through admin
+        if obj and obj.accepted_at:
+            return False
+
+        return super().has_delete_permission(request, obj)

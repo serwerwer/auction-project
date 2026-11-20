@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -18,21 +19,6 @@ class User(AbstractUser):
     # Each email address can belong to only one account
     email = models.EmailField(unique=True)
 
-    # Store the phone number for SMS authentication and notifications
-    # Allow empty values during incomplete registration
-    # Phone numbers should be normalized to E.164 format (example: +48512345678)
-    phone_number = models.CharField(
-        max_length=16,
-        unique=True,
-        null=True,
-        blank=True,
-    )
-
-    # Track whether user's contact details have been verified
-    # These fields must only change after successful verification
-    email_verified = models.BooleanField(default=False)
-    phone_verified = models.BooleanField(default=False)
-
     # Use email instead of username for Django authentication
     USERNAME_FIELD = "email"
 
@@ -43,6 +29,55 @@ class User(AbstractUser):
     # The manager defines how users and superusers are created
     objects = UserManager()
 
+    # Choose whether to show the pseudonym in public bid history
+    use_pseudonym = models.BooleanField(default=False)
+
     # Display the email when representing a user as text
     def __str__(self):
         return self.email
+
+    @property
+    def public_bidder_name(self):
+        # show the accepted pseudonym when available
+        pseudonym = getattr(self, "auction_pseudonym", None)
+
+        if self.use_pseudonym and pseudonym and pseudonym.accepted_at:
+            return pseudonym.name
+
+        # otherwise, show the real name of the user
+        full_name = f"{self.first_name} {self.last_name}".strip()
+
+        return full_name or "Uczestnik"
+
+
+# Store predefined pseudonyms that users can randomly draw
+class Pseudonym(models.Model):
+    # Store unique names, so the same pseudonym cannot exist twice
+    name = models.CharField(max_length=50, unique=True)
+
+    # Connect an accepted pseudonym to one user only
+    # Keep the pseudonym reserved even if the user account is deleted
+    assigned_to = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="auction_pseudonym",
+    )
+
+    # Store when the user permanently accepted the pseudonym
+    # Empty value means the pseudonym has not been accepted yet
+    accepted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    # Set Polish names for the Django Admin panel
+    class Meta:
+        verbose_name = "Pseudonim"
+        verbose_name_plural = "Pseudonimy"
+
+    # Display the pseudonym instead of the deafault ID
+    def __str__(self):
+        return self.name

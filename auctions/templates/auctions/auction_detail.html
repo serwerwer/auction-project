@@ -137,7 +137,7 @@
 
             {% for bid in bids %}
                 <div class="bid-row">
-                    <span>{{ bid.user }}</span>
+                    <span>{{ bid.user.public_bidder_name }}</span>
                     <strong>{{ bid.amount }} zł</strong>
                 </div>
             {% empty %}

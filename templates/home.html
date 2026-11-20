@@ -1,0 +1,145 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aukcje | Krakowski Bal</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="{% url 'home' %}" class="brand">
+            <img
+                src="{% static 'img/krakowski-bal-logo.png' %}"
+                alt="Krakowski Bal"
+            >
+            <span class="brand-text">AUKCJE CHARYTATYWNE</span>
+        </a>
+
+        <nav class="user-nav" aria-label="Menu użytkownika">
+            {% if user.is_authenticated %}
+                <span class="user-name">
+                    {% if user.first_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        {{ user.email }}
+                    {% endif %}
+                </span>
+                <a href="{% url 'account_profile' %}">Moje konto</a>
+                <a href="{% url 'pseudonym_settings' %}">Mój pseudonim</a>
+                <a href="{% url 'account_logout' %}" class="nav-action">
+                    Wyloguj się
+                </a>
+            {% else %}
+                <a href="{% url 'account_login' %}">Zaloguj się</a>
+                <a href="{% url 'account_signup' %}" class="nav-action">
+                    Zarejestruj się
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="intro container">
+        <div class="intro-accent"></div>
+        <span class="eyebrow">KRAKOWSKI BAL</span>
+        <h1>Aukcja charytatywna</h1>
+        <p>
+            Wyjątkowe przedmioty. Wspólny cel.
+            Licytuj i wspieraj Fundację L'Arche
+            oraz Fundację Szkoła bez Barier.
+        </p>
+        <a href="#auctions" class="intro-link">
+            Odkryj aukcje <span aria-hidden="true">↘</span>
+        </a>
+    </section>
+
+    <section class="auction-section" id="auctions">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">KATALOG</span>
+                    <h2>Przedmioty aukcyjne</h2>
+                </div>
+                <span class="auction-count">
+                    {{ auctions|length }} aukcji
+                </span>
+            </div>
+
+            <div class="auction-grid">
+                {% for auction in auctions %}
+                    <article class="auction-card">
+                        <div class="auction-art">
+                            <span class="art-letter">K</span>
+                            <span class="art-number">
+                                NR {{ auction.id }}
+                            </span>
+                        </div>
+
+                        <div class="auction-content">
+                            {% if auction.is_active %}
+                                <span class="status status-active">
+                                    <span class="status-dot"></span>
+                                    Aukcja trwa
+                                </span>
+                            {% else %}
+                                <span class="status status-closed">
+                                    Aukcja zakończona
+                                </span>
+                            {% endif %}
+
+                            <h3>{{ auction.title }}</h3>
+
+                            <div class="price-block">
+                                <span>Aktualna cena</span>
+                                <strong>
+                                    {{ auction.current_price|floatformat:2 }} zł
+                                </strong>
+                            </div>
+
+                            <div class="auction-meta">
+                                <span>Zakończenie</span>
+                                <strong>
+                                    {{ auction.ends_at|date:"d.m.Y · H:i" }}
+                                </strong>
+                            </div>
+
+                            <a
+                                href="{% url 'auctions:detail' auction_id=auction.id %}"
+                                class="auction-link"
+                            >
+                                Zobacz szczegóły
+                                <span aria-hidden="true">↗</span>
+                            </a>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-state">
+                        <h3>Aukcje już wkrótce</h3>
+                        <p>
+                            Przygotowujemy katalog przedmiotów.
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <span>KRAKOWSKI BAL · AUKCJE CHARYTATYWNE</span>
+        <a href="https://krakowskibal.pl/">
+            Oficjalna strona Balu ↗
+        </a>
+    </div>
+</footer>
+
+</body>
+</html>

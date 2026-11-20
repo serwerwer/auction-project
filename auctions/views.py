@@ -39,7 +39,7 @@ def auction_detail_and_bid(request, auction_id):
     # Retrive bidding history
     bids = (
         Bid.objects.filter(auction=auction)
-        .select_related("user")
+        .select_related("user", "user__auction_pseudonym")
         .order_by("-amount", "-created_at")
     )
     highest_bid = bids.first()
